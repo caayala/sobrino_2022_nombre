@@ -7,7 +7,7 @@ library(guaguas)
 
 rango_anios_interes <- 2015:2020
 
-df_name <- guaguas::guaguas_frecuentes %>% 
+df_name <- guaguas::guaguas %>% 
   filter(sexo == 'M')
 
 
@@ -25,7 +25,7 @@ df_name_resiente_tot <- df_name_resiente %>%
 
 df_name_resiente_wide <- df_name_resiente %>% 
   select(!proporcion) %>% 
-  pivot_wider(names_from = anio, values_from = n)
+  pivot_wider(names_from = anio, values_from = n, values_fn = mean)
 
 # Agregar datos totales
 df_name_resiente_wide_tot <- left_join(df_name_resiente_wide, 
@@ -50,6 +50,7 @@ df_name_resiente_wide_tot <- df_name_resiente_wide_tot %>%
   mutate(nombre = as_factor(nombre))
 
 df_name_resiente_wide_tot %>% 
+  filter(n_total > 10) %>% 
   ggplot(aes(x = nombre, y = n_total)) +
   geom_col() +
   guides(x = guide_axis(angle = 90, check.overlap = TRUE, n.dodge = 2))
